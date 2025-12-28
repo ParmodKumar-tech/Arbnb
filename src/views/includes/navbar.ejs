@@ -1,0 +1,153 @@
+<style>
+.search-btn{
+  background-color: #fe424d;
+  color: white;
+  border-radius: 25px;
+  padding: 0 1rem 0 1rem;
+}
+
+.search-btn:hover{
+  background-color: #1a0809;
+  color: white;
+}
+.search-btn i{
+  display: inline;
+  margin-right:0.5rem;
+
+}
+.search-input{
+  border: 1px solid black;
+  border-radius: 25px;
+  padding: 0.5rem 3rem 0.5rem 3rem;
+  font-size: 1rem;
+}
+.username{
+  border-bottom: 2px solid black;
+  font-style: italic;
+}
+
+
+#searchSuggestions{
+  top: 100%;
+}
+#searchSuggestions .list-group-item {
+  cursor: pointer;
+
+}
+
+@media (min-width:760px) and (max-width:891px){
+  .search-btn{
+    display: none !important;
+  }
+}
+
+
+</style>
+
+<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top ">
+    <div class="container-fluid">
+        
+     <a class="navbar-brand" href="/lists"><i class="fa-solid fa-compass"></i></a>
+      <div class="navbar-brand mx-auto"> 
+          <a class="nav-link logo-text " href="/lists"><b>WandLust - Advanture</b></a>
+      </div>
+
+      <button class="navbar-toggler" type="button" 
+      data-bs-toggle="collapse" 
+      data-bs-target="#navbarNavAltMarkup" >
+      <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse p-1" id="navbarNavAltMarkup">
+        <div class="navbar-nav ms-auto">
+          <form id="searchForm" class="d-flex needs-validation" novalidate role="search">
+            <input id="searchField" required class="form-control me-2 search-input" name="searchData" type="search" placeholder="Search destination" aria-label="Search">
+            <button class="btn search-btn" type="submit">
+              <i class="fa-solid fa-magnifying-glass"></i>Search</button>
+          </form>
+          <div id="searchSuggestions" class="list-group position-absolute"></div>
+        </div>
+
+        <div class="navbar-nav ms-auto ">
+        <a class="nav-link" href="/lists/newlist">Add list </a>
+          <% if(!currentUser){ %>
+            <a class="nav-link active" href="/signup"><b>Sign up</b></a>
+            <a class="nav-link" href="/login"><b>Log in</b></a>
+          <%}%>
+          <% if(currentUser){ %>
+          <a class="nav-link" href="/logout">Logout</a>
+          <a class="nav-link username" ><%=currentUser.username%></a>
+          
+          <%}%>
+        </div>
+      </div>
+    </div>
+</nav>
+
+<script>
+  const searchSuggestions=document.getElementById('searchSuggestions');
+  const searchField=document.getElementById('searchField');
+  const searchForm = document.getElementById('searchForm');
+
+  const fetchSuggestions=async(query)=>{
+    const res = await fetch("/lists/search",{
+      method:"POST",
+      headers: {"Content-Type":"application/json"},
+      body:JSON.stringify({searchData:query})
+    })
+    return res.json(); 
+  }
+
+  const renderSuggestions=(items)=>{
+
+    searchSuggestions.innerHTML = "";
+    if (!items || items.length === 0) return;
+
+    items.forEach(({id,title})=>{
+      const a=document.createElement('a');
+      a.textContent=title;
+      a.className = "list-group-item list-group-item-action ";
+      a.addEventListener("click",()=>{
+        searchField.value=title;
+        searchSuggestions.innerHTML = "";
+      })
+      searchSuggestions.appendChild(a);
+    })
+   
+  }
+
+  let debounceTimer;
+  searchField.addEventListener("input",(e)=>{
+    const q=e.target.value.trim();
+    clearTimeout(debounceTimer);
+
+    if (!q) {
+      searchSuggestions.innerHTML = "";
+      return;
+    }
+    
+    debounceTimer=setTimeout(async()=>{
+      try{
+        const res= await fetchSuggestions(q);
+        if(res.success){
+          renderSuggestions(res.items);
+        }
+      }
+      catch(e){
+        console.log(e.message);
+      }
+    },300)
+  })
+
+
+  searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const query = searchField.value.trim();
+    if (!query) return;
+
+    const encoded = encodeURIComponent(query);
+    window.location.href = `/lists/search/${encoded}`;
+  });
+</script>
+
+</script>

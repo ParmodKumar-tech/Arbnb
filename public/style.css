@@ -98,7 +98,7 @@ body{
 
 }
 .card-body{
-    padding: 0 !important;
+    padding: 0.2rem !important;
 }
 
 
@@ -145,6 +145,30 @@ body{
     margin: 0.5rem 0rem 0.5rem 0rem !important;
 
 }
+
+
+.loadingText {
+  font-weight: bold;
+  font-size: 1.0rem;
+  color: #ccc;
+  background: linear-gradient(90deg, #ccc 25%, #fe424d 50%, #ccc 75%);
+  background-size: 200% 100%;
+  background-position: 200% center;
+  animation: shimmer 2.0s infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: default;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
 
 @media(max-width: 519px){
   .filters{

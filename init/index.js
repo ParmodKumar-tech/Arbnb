@@ -1,28 +1,29 @@
-const mongoose=require("mongoose");
-const sampleData=require("../init/data.js");
-const Listing=require("../Models/listing.js");
+import mongoose from "mongoose";
+import { Listing } from "../src/models/listing.model.js";
+import { sampleListings } from "./data.js";
 
-const MONGO_URL="mongodb://127.0.0.1:27017/advanture" // database name -> advanture
+import "dotenv/config.js";
 
-async function main(){
-    await mongoose.connect(MONGO_URL);
+const dbUrl = "mongodb+srv://parkash:0235%40@clusterairbnb.55xrfpc.mongodb.net/?retryWrites=true&w=majority&appName=ClusterAirbnb";
+console.log(dbUrl)
 
-}
-main().then(()=>{
-    console.log("connected with DB");
-}).catch((er)=>console.log(er));
+async function seedDB() {
+  try {
+    await mongoose.connect(dbUrl);
+    console.log("✅ Database connected");
 
-
-
-const initDB = async ()=>{
-    // clean old data
+    // Clear old data
     await Listing.deleteMany({});
-    
-    sampleData.data= sampleData.data.map((obj)=>({...obj,owner:"66a11f2a72ae496cfc09a85e"}));
-    
-    // add new data
-    await Listing.insertMany(sampleData.data);
-    
-    console.log("data was initialize..");
+    console.log("🗑️ Old listings removed");
+
+    // Insert new data
+    await Listing.insertMany(sampleListings);
+    console.log("🌱 Sample listings added successfully!");
+
+    mongoose.connection.close();
+  } catch (error) {
+    console.error("❌ Seeding error:", error);
+  }
 }
-initDB();
+
+seedDB();

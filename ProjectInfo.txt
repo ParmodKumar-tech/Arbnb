@@ -1,0 +1,35 @@
+Passport - Authentication library
+
+Password is authentication library, used in Express- based web application that support varies techniques/strategy such as [username & password], [Facebook], [Google], etc. through which user can authentication on the platform. 
+
+**** Feature/benefit ****
+
+* Varies Techniques: 
+* it's provide pre - build authentication code, that help to avoid writing  from scratch. 
+
+* Secure Password automatically: 
+* when we use local Strategy means, user register or logic with email & password, it automatically add username & secure password(hash form) field in user.model( user Schema), which make us free to explicit install third-party library for making password secure. 
+
+* Handles session management:
+Passport helps manage user sessions, ensuring that users are properly authenticated and authorized throughout their interactions with the application. 
+
+* Make it Fast:
+These feature make it fast the development process, 
+allow developer to focus on other core functionality of the application.
+
+**** WorkFlow ****
+
+// To Initialize the passport
+
+app.use(passport.initialize()); // initialize , it befor use
+app.use(passport.session()); // Persist login sessions, so on every request user appear login , Not Logout 
+passport.use(new LocalStrategy(modelUser.authenticate())); // using strategy LocalStrategy
+passport.serializeUser(modelUser.serializeUser()); // This function is called after a user authenticates successfully. Its role is to decide what user data should be stored in the session. Usually, just a user identifier (like user.id) is serialized
+passport.deserializeUser(modelUser.deserializeUser()); //when a session cookie is present, Passport retrieves the stored user ID from the session and calls this function. It's responsible for using the user ID to fetch the full user details from your database or another datastore
+
+
+// Another library , used with mongoose in context of passport is [ passport-local-mongoose ]
+
+const passportLocalMongoose=require("passport-local-mongoose"); // passport-local-mongoose will add username, hash and salt field to store username,the hashed password and the salt value.
+userSchema.plugin(passportLocalMongoose); // username and password(with hashPassword, and name of field is "hash") created by passport-local-mongoose,when using localStrategy.
+ 
