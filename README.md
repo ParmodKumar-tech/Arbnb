@@ -72,7 +72,7 @@ Instead of storing images directly in the database:
 
 ```bash
 # Clone the repository
-git clone git@github.com:ParmodKumar-tech/Airbnb-Project.git
+git clone git@github.com:ParmodKumar-tech/Arbnb.git
 
 # Navigate to project folder
 cd airbnb-project
