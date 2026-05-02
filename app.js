@@ -17,6 +17,7 @@ import reviewRouter from "./src/routes/review.route.js";
 import { connectDB,mongoStore } from "./src/config/db.config.js";
 import "dotenv/config.js";
 
+
 const app=express();
 const __filename=fileURLToPath(import.meta.url);
 const __dirname=dirname(__filename);
@@ -27,18 +28,17 @@ app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
 app.set("views",path.join(__dirname,"src","views"))
 app.use(express.urlencoded({extended:true}));
-app.use(cookieParser("secretCode")); 
+app.use(cookieParser(process.env.COOKIE_PARSER)); 
 
 connectDB();
 
 const sessionOption={
     store:mongoStore(),
-    secret:process.env.SECRET,
+    secret:process.env.SESSION_SECRET,
     resave:false,
-    saveUninitialized:true,
+    saveUninitialized:false,
 
     cookie:{
-        expires: Date.now() + 7*24*60*60*1000, 
         maxAge:7*24*60*60*1000,
         httpOnly:true
     }
@@ -66,11 +66,11 @@ app.use("/lists/:id/reviews",reviewRouter);
 app.use("/",userRouter);
 
 
-app.all("*",(req,res,next)=>{
+app.all("*",(err,req,res,next)=>{
     next(new ExpressError(404,"Page not found"));
 });
 
 
-app.listen("8080",(req,res)=>{
-    console.log("server is ready to listen on port 8080 ...");
+app.listen(process.env.PORT,(req,res)=>{
+    console.log("server is ready to listen...");
 })
